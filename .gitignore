@@ -1,0 +1,14 @@
+/.idea/
+/.vscode/
+
+/.config/
+/.out/
+
+/.res/real
+/.res/bpic
+
+*.log
+*.pyc
+.ipynb_checkpoints
+*.egg-info/
+.DS_Store

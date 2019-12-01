@@ -1,0 +1,28 @@
+name: deepalign
+channels:
+  - defaults
+dependencies:
+  - python=3.6
+  - h5py
+  - jupyter
+  - lxml
+  - matplotlib
+  - networkx
+  - numpy
+  - openpyxl
+  - pandas
+  - pip
+  - pygraphviz
+  - scikit-learn
+  - scipy
+  - seaborn
+  - xlrd
+  - pip:
+      - arrow
+      - editdistance
+      - pm4py
+      - pm4pycvxopt
+      - pydot
+      - tensorflow==2.0.0
+      - tqdm
+      - untangle
