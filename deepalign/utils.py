@@ -362,3 +362,17 @@ def cd_plot(ranks, cd=None, lowv=None, highv=None, width=6, textspace=1, reverse
         start += 0.1
 
     return fig
+
+
+def download_pretrained_models():
+    from io import BytesIO
+    from zipfile import ZipFile
+    import requests
+    from deepalign.fs import ROOT_DIR
+
+    r = requests.get('https://github.com/tnolle/deepalign/releases/download/1.0.0/pretrained-models.zip',
+                     allow_redirects=True)
+    file = ZipFile(BytesIO(r.content))
+    file.extractall(ROOT_DIR)
+
+    return 'Download finished, check your `.out` folder.'
