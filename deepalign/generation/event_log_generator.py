@@ -263,7 +263,8 @@ class EventLogGenerator(object):
         # Apply anomalies and add case id
         cases = []
         for case_id, path in enumerate([random_walk(self.likelihood_graph) for _ in iter], start=1):
-            case_attrs = case_dependencies['->'.join(none_anomaly.path_to_case(path).trace)]
+            variant = '->'.join(none_anomaly.path_to_case(path).trace)
+            case_attrs = case_dependencies[variant] if variant in case_dependencies else []
             if np.random.uniform(0, 1) <= anomaly_p:
                 anomaly = np.random.choice(anomalies, p=anomaly_type_p)
             else:
@@ -291,7 +292,7 @@ class EventLogGenerator(object):
         return event_log
 
     def plot_likelihood_graph(self, file_name=None, figsize=None):
-        from april.utils import microsoft_colors
+        from deepalign.utils import microsoft_colors
         from matplotlib import pylab as plt
 
         l = self.likelihood_graph

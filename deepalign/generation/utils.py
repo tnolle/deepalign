@@ -81,7 +81,7 @@ def generate_for_process_model(process_model, size=5000, anomalies=None, anomaly
     np.random.seed(seed)
     seeds = np.random.randint(0, 10000, size=len(parameters))
 
-    for i, (seed, params) in tqdm(enumerate(zip(seeds, parameters), start=1), desc=process_model, total=len(seeds)):
+    for seed, params in tqdm(zip(seeds, parameters), desc=process_model, total=len(seeds)):
         anom_p, num_attr, act_dep_p, attr_dep_p, p_var = params
 
         _anomalies = anomalies
@@ -101,6 +101,6 @@ def generate_for_process_model(process_model, size=5000, anomalies=None, anomaly
                                        seed=seed,
                                        show_progress=show_progress)
 
-        generator.plot_likelihood_graph(f'graph_{process_model}{postfix}-{anom_p}-{i}.pdf', figsize=(20, 50))
+        generator.plot_likelihood_graph(f'graph_{process_model}{postfix}-{anom_p}-{num_attr}.pdf', figsize=(20, 50))
 
-        event_log.save(process_model + postfix, anom_p, i)
+        event_log.save(process_model + postfix, anom_p, num_attr)
