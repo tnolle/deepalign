@@ -43,3 +43,11 @@ Note: To use the graph plotting methods, you will have to install Graphviz.
 Check the `notebooks` directory for example Jupyter Notebooks.
     
 ## References
+1. [Nolle, T., Seeliger, A., Mühlhäuser, M.: Unsupervised anomaly detection in noisy business process event logs using
+    denoising autoencoders, 2016](https://doi.org/10.1007/978-3-319-46307-0_28)
+2. [Nolle, T., Luettgen, S., Seeliger A., Mühlhäuser, M.: Analyzing business process anomalies using autoencoders,
+    2018](https://doi.org/10.1007/s10994-018-5702-8)
+3. [Nolle, T., Seeliger, A., Mühlhäuser, M.: BINet: Multivariate Business Process Anomaly Detection Using Deep Learning,
+    2018](https://doi.org/10.1007/978-3-319-98648-7_16)
+4. [Nolle, T., Luettgen, S., Seeliger, A., Mühlhäuser, M.: BINet: Multi-perspective Business Process Anomaly Classification,
+   2019](https://doi.org/10.1016/j.is.2019.101458)
