@@ -14,5 +14,5 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 # ==============================================================================
 
-from deepalign.anomalydetection.utils.binarizer import Binarizer
-from deepalign.anomalydetection.utils.result import AnomalyDetectionResult
+from deepalign.anomalydetection.binarizer import Binarizer
+from deepalign.anomalydetection.result import AnomalyDetectionResult

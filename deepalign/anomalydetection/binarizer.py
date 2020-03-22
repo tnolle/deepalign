@@ -18,12 +18,11 @@ import numpy as np
 
 from deepalign.anomalydetection.utils import label_collapse
 from deepalign.anomalydetection.utils import max_collapse
-from deepalign.anomalydetection.utils.heuristic import best_heuristic
-from deepalign.anomalydetection.utils.heuristic import elbow_heuristic
-from deepalign.anomalydetection.utils.heuristic import lowest_plateau_heuristic
-from deepalign.anomalydetection.utils.heuristic import ratio_heuristic
+from deepalign.anomalydetection.heuristic import best_heuristic
+from deepalign.anomalydetection.heuristic import elbow_heuristic
+from deepalign.anomalydetection.heuristic import lowest_plateau_heuristic
+from deepalign.anomalydetection.heuristic import ratio_heuristic
 from deepalign.enums import Base
-from deepalign.enums import Class
 from deepalign.enums import Heuristic
 from deepalign.enums import Strategy
 
