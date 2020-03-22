@@ -1,4 +1,4 @@
-# Copyright 2019 Timo Nolle
+# Copyright 2020 Timo Nolle
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@ import h5py
 import numpy as np
 import tensorflow as tf
 from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import StandardScaler
 from tqdm import tqdm
 
 from deepalign.enums import AttributeType
@@ -63,6 +64,7 @@ class Dataset(object):
         self.classes = None
         self.labels = None
         self.encoders = None
+        self.scalers = None
         self.case_encoders = None
         self._attribute_dims = None
         self._attribute_types = None
@@ -125,12 +127,24 @@ class Dataset(object):
             self._feature_types = file.attrs['feature_types']
 
             self.encoders = {}
+            self.scalers = {}
             for key, attr_type in zip(self.attribute_keys, self.attribute_types):
                 features = file['features'][key]
                 if 'encoder' in features.attrs and attr_type == AttributeType.CATEGORICAL:
                     enc = LabelEncoder()
                     enc.classes_ = np.array(features.attrs['encoder'])
                     self.encoders[key] = enc
+                elif 'encoder_' + key in file['features']:
+                    enc = LabelEncoder()
+                    enc.classes_ = np.array([str(s, 'utf-8') for s in file['features']['encoder_' + key]])
+                    self.encoders[key] = enc
+                elif 'scaler' in features.attrs and attr_type == AttributeType.NUMERICAL:
+                    scaler = StandardScaler()
+                    mean, var, scale = features.attrs['scaler']
+                    scaler.mean_ = mean
+                    scaler.var_ = var
+                    scaler.scale_ = scale
+                    self.scalers[key] = scaler
 
             self.case_lens = np.array(file['case_lens'][self.start:self.end])
             if self.clip_len is not None:
@@ -154,7 +168,12 @@ class Dataset(object):
             for x, key in zip(self._features, self._attribute_keys):
                 dataset = features.create_dataset(key, data=x, compression="gzip", compression_opts=9)
                 if key in self.encoders:
-                    dataset.attrs['encoder'] = self.encoders[key].classes_.tolist()
+                    data = [c.encode('utf-8') for c in self.encoders[key].classes_]
+                    features.create_dataset('encoder_' + key, data=data, compression='gzip', compression_opts=9)
+                    # dataset.attrs['encoder'] = self.encoders[key].classes_.tolist()
+                elif key in self.scalers:
+                    scaler = self.scalers[key]
+                    dataset.attrs['scaler'] = (scaler.mean_, scaler.var_, scaler.scale_)
 
             file.create_dataset('classes', data=self.classes, compression="gzip", compression_opts=9)
             file.create_dataset('case_lens', data=self.case_lens, compression="gzip", compression_opts=9)
@@ -620,8 +639,8 @@ class Dataset(object):
         case_lens = []
 
         # Remove numerical attributes
-        event_attrs = [a for a, t in zip(event_attrs, event_attr_types) if t == AttributeType.CATEGORICAL]
-        event_attr_types = [t for t in event_attr_types if t == AttributeType.CATEGORICAL]
+        # event_attrs = [a for a, t in zip(event_attrs, event_attr_types) if t == AttributeType.CATEGORICAL]
+        # event_attr_types = [t for t in event_attr_types if t == AttributeType.CATEGORICAL]
 
         # Create beginning of sequence event
         start_event = dict((a, EventLog.start_symbol if t == AttributeType.CATEGORICAL else 0.0) for a, t in
@@ -665,18 +684,21 @@ class Dataset(object):
                     event_feature_columns[key].append(attr)
 
         case_encoders = {}
+        case_scalers = {}
         for key, attr_type in zip(case_attrs, case_attr_types):
             if attr_type == AttributeType.CATEGORICAL:
                 encoder = LabelEncoder()
                 case_feature_columns[key] = encoder.fit_transform(case_feature_columns[key])
                 case_encoders[key.replace(':', '_').replace(' ', '_')] = encoder
             elif attr_type == AttributeType.NUMERICAL:
-                f = np.array(case_feature_columns[key])
-                f[np.isnan(f)] = f[~np.isnan(f)].mean()
-                case_feature_columns[key] = (f - f.mean()) / f.std()  # 0 mean and 1 std normalization
+                scaler = StandardScaler()
+                case_feature_columns[key] = scaler.fit_transform(np.array(case_feature_columns[key]).reshape(-1, 1))[:,
+                                            0]
+                case_scalers[key.replace(':', '_').replace(' ', '_')] = scaler
 
         # Data preprocessing
         event_encoders = {}
+        event_scalers = {}
         for key, attr_type in zip(event_attrs, event_attr_types):
             if attr_type == AttributeType.CATEGORICAL:
                 encoder = LabelEncoder()
@@ -684,8 +706,10 @@ class Dataset(object):
                 encoder.classes_ = np.concatenate((['•'], encoder.classes_))  # Add padding at position 0
                 event_encoders[key.replace(':', '_').replace(' ', '_')] = encoder
             elif attr_type == AttributeType.NUMERICAL:
-                f = np.array(event_feature_columns[key])
-                event_feature_columns[key] = (f - f.mean()) / f.std()  # 0 mean and 1 std normalization
+                scaler = StandardScaler()
+                event_feature_columns[key] = scaler.fit_transform(np.array(event_feature_columns[key]).reshape(-1, 1))[
+                                             :, 0]
+                event_scalers[key.replace(':', '_').replace(' ', '_')] = scaler
 
         # Retrieve case level features
         case_features = [case_feature_columns[key] for key in case_attrs]
@@ -704,8 +728,8 @@ class Dataset(object):
         case_attr_keys = [a.replace(':', '_').replace(' ', '_') for a in case_attrs]
 
         # Prepare return values
-        event_data = (event_features, event_attr_types, event_attr_keys, event_encoders)
-        case_data = (case_features, case_attr_types, case_attr_keys, case_encoders)
+        event_data = (event_features, event_attr_types, event_attr_keys, event_encoders, event_scalers)
+        case_data = (case_features, case_attr_types, case_attr_keys, case_encoders, case_scalers)
 
         return event_data, case_data, case_lens
 
@@ -718,9 +742,9 @@ class Dataset(object):
         """
         # Get features from event log
         event_data, case_data, self.case_lens = self._from_event_log(event_log)
-        self._features, self._attribute_types, self._attribute_keys, self.encoders = event_data
-        event_features, event_attr_types, event_attr_keys, event_encoders = event_data
-        case_features, case_attr_types, case_attr_keys, case_encoders = case_data
+        self._features, self._attribute_types, self._attribute_keys, self.encoders, self.scalers = event_data
+        event_features, event_attr_types, event_attr_keys, event_encoders, event_scalers = event_data
+        case_features, case_attr_types, case_attr_keys, case_encoders, case_scalers = case_data
 
         # Combine
         self._features = event_features + case_features
@@ -730,6 +754,7 @@ class Dataset(object):
                               [FeatureType.EVENT] * (len(event_features) - 1) + \
                               [FeatureType.CASE] * len(case_features)
         self.encoders = dict(**event_encoders, **dict((f'{CASE_PREFIX}{k}', v) for k, v in case_encoders.items()))
+        self.scalers = dict(**event_scalers, **dict((f'{CASE_PREFIX}{k}', v) for k, v in case_scalers.items()))
 
         # Calculate dimensions
         self._attribute_dims = [f.max() if t == AttributeType.CATEGORICAL else 1

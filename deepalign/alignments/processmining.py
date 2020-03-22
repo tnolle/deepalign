@@ -1,4 +1,4 @@
-#  Copyright 2019 Timo Nolle
+#  Copyright 2020 Timo Nolle
 #
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -178,7 +178,9 @@ class HeuristicsMinerAligner(PM4PYAligner):
     miner = heuristics_miner
     parameters = {'dependency_thresh': 0.99}
 
-    def __init__(self, model=None):
+    def __init__(self, model=None, parameters=None):
+        if parameters is not None:
+            self.parameters = parameters
         super(HeuristicsMinerAligner, self).__init__(model=model)
 
 
@@ -187,8 +189,11 @@ class InductiveMinerAligner(PM4PYAligner):
     name = 'InductiveMiner'
 
     miner = inductive_miner
+    parameters = {'noiseThreshold': 0.2}
 
-    def __init__(self, model=None):
+    def __init__(self, model=None, parameters=None):
+        if parameters is not None:
+            self.parameters = parameters
         super(InductiveMinerAligner, self).__init__(model=model)
 
 

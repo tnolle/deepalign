@@ -1,4 +1,4 @@
-# Copyright 2019 Timo Nolle
+# Copyright 2020 Timo Nolle
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 import numpy as np
 import seaborn as sns
 
+from deepalign import fs
 from deepalign.enums import Axis
 from deepalign.enums import Heuristic
 from deepalign.enums import Strategy
@@ -376,3 +377,7 @@ def download_pretrained_models():
     file.extractall(ROOT_DIR)
 
     return 'Download finished, check your `.out` folder.'
+
+
+if __name__ == '__main__':
+    download_pretrained_models()

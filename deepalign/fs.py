@@ -1,4 +1,4 @@
-# Copyright 2019 Timo Nolle
+# Copyright 2020 Timo Nolle
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -57,8 +57,6 @@ def generate():
         RESULT_DIR,
         EVENTLOG_CACHE_DIR,
         MODEL_DIR,
-        MODEL_DIR,
-        RESULT_DIR,
         ALIGNMENTS_DIR,
         CORRECTIONS_DIR,
         PROCESS_MODEL_DIR,

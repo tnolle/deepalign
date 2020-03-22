@@ -1,4 +1,4 @@
-#  Copyright 2019 Timo Nolle
+#  Copyright 2020 Timo Nolle
 #
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -166,9 +166,8 @@ class BINet(tf.keras.Model):
                     x = tf.concat([x, *[tf.pad(e[:, 1:x.shape[1]], [(0, 0), (0, 1), (0, 0)], 'constant', 0)
                                         for j, e in enumerate(rnn_embeddings) if i != j]], axis=-1)
                 elif self.use_present_activity:
-                    x = tf.concat(
-                        [x, tf.pad(rnn_embeddings[0][:, 1:x.shape[1]], [(0, 0), (0, 1), (0, 0)], 'constant', 0)],
-                        axis=-1)
+                    x = tf.concat([x, tf.pad(rnn_embeddings[0][:, 1:x.shape[1]], [(0, 0), (0, 1), (0, 0)], 'constant', 0)],
+                                  axis=-1)
             x = out(x)
             outputs.append(x)
 
@@ -258,7 +257,7 @@ class ConfNet:
         for x, y in dataset.to_tf_dataset().batch(batch_size):
             if not isinstance(x, tuple):
                 x = [x]
-            a, sb, sp, b, p, c = self.align([_x.numpy() for _x in x], detailed=True, **kwargs)
+            a, b, c, sb, sp, p, _, _ = self.align([_x.numpy() for _x in x], detailed=True, **kwargs)
 
             alignments.append(a)
             start_beams.append(sb)
@@ -381,6 +380,7 @@ class ConfNet:
                 cost_y[beams_y[0] < 0] = -beams_y[0][beams_y[0] < 0]
                 cost_y[beams_y[0] == -42] = 0
                 costs = costs[:, None] + cost_y
+
                 idx = np.lexsort((-costs.reshape(shape), beams_p.reshape(shape)), axis=-1)[:, ::-1][:, :k]
                 x_idx = (np.zeros_like(beams_p, dtype=int) + np.arange(alive.sum())[:, None]).reshape(shape)
                 x_idx = gather(x_idx, idx).reshape(alive.sum())
@@ -414,13 +414,7 @@ class ConfNet:
 
             # Print progress
             print(
-                'Step {:2d} {} {:.2f}s finished={}/{}'.format(
-                    i + 1,
-                    '←' if go_backwards else '→',
-                    np.round(time() - start_time, 2),
-                    (~alive).sum() // k,
-                    alive.shape[0] // k)
-            )
+                f'Step {i + 1} {"←" if go_backwards else "→"} {time() - start_time}s {x[0].shape} finished={(~alive).sum() // k}')
 
             # Go the other way the next step
             go_backwards = not go_backwards
@@ -442,6 +436,6 @@ class ConfNet:
         alignments = get_alignments(start_beams, beams, inserts, deletes)
 
         if detailed:
-            return alignments, start_beams, start_probs, beams, probs, costs
+            return alignments, beams, costs, start_beams, start_probs, probs, inserts, deletes
 
         return alignments, beams, costs

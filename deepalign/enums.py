@@ -1,4 +1,4 @@
-#  Copyright 2019 Timo Nolle
+#  Copyright 2020 Timo Nolle
 #
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -105,15 +105,6 @@ class Class(object):
         return dict(zip(Class.keys(), Class.values()))
 
 
-class PadMode(object):
-    PRE = 'pre'
-    POST = 'post'
-
-    @staticmethod
-    def keys():
-        return [PadMode.PRE, PadMode.POST]
-
-
 class Mode(object):
     BINARIZE = 'binarize'
     CLASSIFY = 'classify'
@@ -146,22 +137,6 @@ class Base(object):
     @staticmethod
     def items():
         return dict(zip(Base.keys(), Base.values()))
-
-
-class Normalization(object):
-    MINMAX = 'minmax'
-
-    @staticmethod
-    def values():
-        return ['MinMax']
-
-    @staticmethod
-    def keys():
-        return [Normalization.MINMAX]
-
-    @staticmethod
-    def items():
-        return dict(zip(Normalization.keys(), Normalization.values()))
 
 
 class Heuristic(object):

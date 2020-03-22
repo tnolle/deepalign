@@ -1,4 +1,4 @@
-#  Copyright 2019 Timo Nolle
+#  Copyright 2020 Timo Nolle
 #
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@ import inspect
 import sys
 
 from deepalign.alignments.confnet import ConfNet
-from deepalign.alignments.baseline import *
+from deepalign.alignments.processmining import *
 
 # Lookup dict for AD abbreviations
 ALIGNERS = dict((ad.abbreviation, ad) for _, ad in inspect.getmembers(sys.modules[__name__], inspect.isclass)
