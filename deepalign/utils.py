@@ -71,15 +71,45 @@ def to_targets(x):
     return align(x, 1)[:, :, 0] * (x != 0).astype(int)
 
 
+def download(url, to):
+    from tqdm import tqdm
+    import requests
+
+    r = requests.get(url, stream=True)
+    total_size = int(r.headers.get('content-length', 0))
+    block_size = 1024 #1 Kibibyte
+    t=tqdm(total=total_size, unit='iB', unit_scale=True)
+    with open(to, 'wb') as f:
+        for data in r.iter_content(block_size):
+            t.update(len(data))
+            f.write(data)
+    t.close()
+    if total_size != 0 and t.n != total_size:
+        print(f"error: could not download {url}")
+
+
 def download_pretrained_models():
+    import os
     from io import BytesIO
     from zipfile import ZipFile
     import requests
-    from deepalign.fs import ROOT_DIR
-
-    r = requests.get('https://github.com/tnolle/deepalign/releases/download/1.0.0/pretrained-models.zip',
-                     allow_redirects=True)
-    file = ZipFile(BytesIO(r.content))
-    file.extractall(ROOT_DIR)
-
-    return 'Download finished, check your `.out` folder.'
+    from deepalign.fs import OUT_DIR
+    
+    url = 'https://github.com/tnolle/deepalign/releases/download/2.0.0/'
+    models = 'pretrained-models.zip'
+    evaluation = 'evaluation.zip'
+    
+    download(url + models, OUT_DIR / 'pretrained-models.zip')
+    download(url + evaluation, OUT_DIR / 'evaluation.zip')
+    
+    print('Extracting pretrained-models.zip')
+    file = ZipFile(str(OUT_DIR / 'pretrained-models.zip'))
+    file.extractall(OUT_DIR)
+    os.remove(OUT_DIR / 'pretrained-models.zip')
+    print('Done')
+    
+    print('Extracting evaluation.zip')
+    file = ZipFile(str(OUT_DIR / 'evaluation.zip'))
+    file.extractall(OUT_DIR)
+    os.remove(OUT_DIR / 'evaluation.zip')
+    print('Done')
