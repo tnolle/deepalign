@@ -377,7 +377,3 @@ def download_pretrained_models():
     file.extractall(ROOT_DIR)
 
     return 'Download finished, check your `.out` folder.'
-
-
-if __name__ == '__main__':
-    download_pretrained_models()
