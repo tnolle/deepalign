@@ -7,20 +7,20 @@ The code in this repository can be used to reproduce the results given in the pa
 
 To illustrate the findings in our paper, this repository contains Jupyter notebooks.
 
-1. [Paper Process from Sec. 4](notebooks/1.%20Paper%20Process%20from%20Sec.%204.ipynb)
+1. [Paper Process from Sec. 4](https://nbviewer.jupyter.org/github/tnolle/deepalign/blob/master/notebooks/1.%20Paper%20Process%20from%20Sec.%204.ipynb)
     * Describes the creation of the paper process used as the running example in the paper.
-2. [Dataset Generation](notebooks/2.%20Dataset%20Generation.ipynb)
+2. [Dataset Generation](https://nbviewer.jupyter.org/github/tnolle/deepalign/blob/master/notebooks/2.%20Dataset%20Generation.ipynb)
     * Downloads the pretrained models and datasets used in the evaluation. Also includes the dataset generation script.
-    * [2.A1 Generation Algorithm](notebooks/2.A1%20Generation%20Algorithm.ipynb) explains how the generation algorithm works.
-3. [Training the Models](notebooks/3.%20Training%20the%20Models.ipynb)
+    * [2.A1 Generation Algorithm](https://nbviewer.jupyter.org/github/tnolle/deepalign/blob/master/notebooks/2.A1%20Generation%20Algorithm.ipynb) explains how the generation algorithm works.
+3. [Training the Models](https://nbviewer.jupyter.org/github/tnolle/deepalign/blob/master/notebooks/3.%20Training%20the%20Models.ipynb)
     * Demonstartes how to train your own models.
-4. [Alignments](notebooks/4.%20Alignments.ipynb)
+4. [Alignments](https://nbviewer.jupyter.org/github/tnolle/deepalign/blob/master/notebooks/4.%20Alignments.ipynb)
     * This notebook contains all the examples from the Evaluation section of the paper and outlines how to reproduce them.
-5. [Caching the Alignments](notebooks/5.%20Caching%20the%20Alignments.ipynb)
+5. [Caching the Alignments](https://nbviewer.jupyter.org/github/tnolle/deepalign/blob/master/notebooks/5.%20Caching%20the%20Alignments.ipynb)
     * This is a helper script to speed up the evaluation.
-6. [Evaluation Script](notebooks/6.%20Evaluation%20Script.ipynb)
+6. [Evaluation Script](https://nbviewer.jupyter.org/github/tnolle/deepalign/blob/master/notebooks/6.%20Evaluation%20Script.ipynb)
     * This is the evaluation script used in the paper.
-7. [Evaluation](notebooks/7.%20Evaluation.ipynb)
+7. [Evaluation](https://nbviewer.jupyter.org/github/tnolle/deepalign/blob/master/notebooks/7.%20Evaluation.ipynb)
     * This notebook contains all tables used in the paper. It also contains some figures that didn't make it into the paper.
 
 ## Setup
