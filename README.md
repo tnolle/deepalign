@@ -38,9 +38,6 @@ on Linux and macOS, and `activate deepalign` on Windows (`cmd` only).
 7. Now you can start the notebook server by `jupyter notebook notebooks`.
 
 Note: To use the graph plotting methods, you will have to install Graphviz.
-
-## Jupyter Notebooks
-Check the `notebooks` directory for example Jupyter Notebooks.
     
 ## References
 1. [Nolle, T., Seeliger, A., Mühlhäuser, M.: Unsupervised anomaly detection in noisy business process event logs using
