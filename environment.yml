@@ -3,7 +3,7 @@ channels:
   - defaults
 dependencies:
   - python=3.6
-  - h5py
+  - h5py==2.10.0
   - jupyter
   - lxml
   - matplotlib
@@ -20,8 +20,8 @@ dependencies:
   - pip:
       - arrow
       - editdistance
-      - pm4py
-      - pm4pycvxopt
+      - pm4py==1.2.9
+      - pm4pycvxopt==0.0.8
       - pydot
       - tensorflow==2.0.0
       - tqdm
