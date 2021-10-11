@@ -20,6 +20,7 @@ dependencies:
   - pip:
       - arrow
       - editdistance
+      - ipywidgets
       - pm4py==1.2.9
       - pm4pycvxopt==0.0.8
       - pydot
